@@ -433,8 +433,12 @@ class Game:
             self.update(inputs)
             self.draw(inputs)
             loop_count += 1
-            if loop_count <= 3:
-                print(f"[py] frame {loop_count}, state={self.state}", flush=True)
+            if loop_count <= 3 or (loop_count % 120 == 0 and loop_count <= 600):
+                p1 = inputs["p1"]
+                sys_in = inputs["system"]
+                print(f"[py] frame {loop_count}, state={self.state}, "
+                      f"a={p1['a']}, start={sys_in['start_1p']}, "
+                      f"left={p1['left']}, right={p1['right']}", flush=True)
             self.clock.tick(FPS)
             await asyncio.sleep(0)
 

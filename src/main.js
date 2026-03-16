@@ -52,7 +52,13 @@ async function main() {
     console.log("[game] all assets loaded to virtual FS");
 
     // Create input bridge - called from Python
-    const getInput = () => ({
+    let inputLogCount = 0;
+    const getInput = () => {
+        if (inputLogCount < 3 || (inputLogCount % 120 === 0 && inputLogCount < 600)) {
+            console.log(`[input] frame=${inputLogCount} P1.A=${PLAYER_1.A} START=${SYSTEM.ONE_PLAYER} type_A=${typeof PLAYER_1.A}`);
+        }
+        inputLogCount++;
+        return {
         p1: {
             up: PLAYER_1.DPAD.up,
             down: PLAYER_1.DPAD.down,
@@ -73,7 +79,8 @@ async function main() {
             start_1p: SYSTEM.ONE_PLAYER,
             start_2p: SYSTEM.TWO_PLAYER,
         },
-    });
+    };
+    };
 
     pyodide.globals.set("_get_input", getInput);
     console.log("[game] running python game code...");
