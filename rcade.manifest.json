@@ -3,7 +3,7 @@
   "name": "where-is-my-treat",
   "display_name": "where-is-my-treat",
   "description": "find the treat!",
-  "visibility": "private",
+  "visibility": "public",
   "authors": [
     {
       "display_name": "Fiona"
