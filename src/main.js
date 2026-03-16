@@ -10,13 +10,11 @@ import dogTailRightUrl from "./assets/dog_tail_right.png";
 import cupUrl from "./assets/cup.png";
 import bagelUrl from "./assets/bagel.png";
 
-globalThis.assets = {
-    dog: dogUrl,
-    dogTailLeft: dogTailLeftUrl,
-    dogTailRight: dogTailRightUrl,
-    cup: cupUrl,
-    bagel: bagelUrl,
-};
+async function loadAssetToFS(pyodide, url, fsPath) {
+    const response = await fetch(url);
+    const buffer = await response.arrayBuffer();
+    pyodide.FS.writeFile(fsPath, new Uint8Array(buffer));
+}
 
 async function main() {
     const pyodide = await loadPyodide({
@@ -35,6 +33,16 @@ async function main() {
     for (const wheel of wheels) {
         await micropip.install(`/assets/${wheel}`);
     }
+
+    // Pre-load image assets into Pyodide's virtual filesystem
+    pyodide.FS.mkdir("/game_assets");
+    await Promise.all([
+        loadAssetToFS(pyodide, dogUrl, "/game_assets/dog.png"),
+        loadAssetToFS(pyodide, dogTailLeftUrl, "/game_assets/dog_tail_left.png"),
+        loadAssetToFS(pyodide, dogTailRightUrl, "/game_assets/dog_tail_right.png"),
+        loadAssetToFS(pyodide, cupUrl, "/game_assets/cup.png"),
+        loadAssetToFS(pyodide, bagelUrl, "/game_assets/bagel.png"),
+    ]);
 
     // Create input bridge - called from Python
     const getInput = () => ({

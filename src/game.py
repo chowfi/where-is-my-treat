@@ -61,28 +61,15 @@ class Game:
         raw_inputs = _get_input()
         self.using_arcade_inputs = hasattr(raw_inputs, "to_py")
 
-        # Load images: use JS-provided URLs in web mode, local paths when local.
-        if self.using_arcade_inputs:
-            from js import assets  # type: ignore[import]
-            dog_path = assets.dog
-            dog_tl_path = assets.dogTailLeft
-            dog_tr_path = assets.dogTailRight
-            cup_path = assets.cup
-            bagel_path = assets.bagel
-        else:
-            dog_path = "assets/dog.png"
-            dog_tl_path = "assets/dog_tail_left.png"
-            dog_tr_path = "assets/dog_tail_right.png"
-            cup_path = "assets/cup.png"
-            bagel_path = "assets/bagel.png"
+        asset_dir = "/game_assets" if self.using_arcade_inputs else "assets"
 
         self.dog_frames = [
-            pygame.image.load(dog_path).convert_alpha(),
-            pygame.image.load(dog_tl_path).convert_alpha(),
-            pygame.image.load(dog_tr_path).convert_alpha(),
+            pygame.image.load(f"{asset_dir}/dog.png").convert_alpha(),
+            pygame.image.load(f"{asset_dir}/dog_tail_left.png").convert_alpha(),
+            pygame.image.load(f"{asset_dir}/dog_tail_right.png").convert_alpha(),
         ]
-        self.cup_image = pygame.image.load(cup_path).convert_alpha()
-        self.bagel_image = pygame.image.load(bagel_path).convert_alpha()
+        self.cup_image = pygame.image.load(f"{asset_dir}/cup.png").convert_alpha()
+        self.bagel_image = pygame.image.load(f"{asset_dir}/bagel.png").convert_alpha()
 
         target_cup_height = 72
         cup_scale = target_cup_height / self.cup_image.get_height()
