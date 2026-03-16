@@ -400,6 +400,8 @@ class Game:
         pygame.display.flip()
 
     async def run(self):
+        print("[py] game loop starting", flush=True)
+        loop_count = 0
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -430,6 +432,9 @@ class Game:
 
             self.update(inputs)
             self.draw(inputs)
+            loop_count += 1
+            if loop_count <= 3:
+                print(f"[py] frame {loop_count}, state={self.state}", flush=True)
             self.clock.tick(FPS)
             await asyncio.sleep(0)
 
