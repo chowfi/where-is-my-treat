@@ -125,6 +125,7 @@ class Game:
         # Fonts
         self.font_large = pygame.font.Font(None, 36)
         self.font_small = pygame.font.Font(None, 24)
+        self.font_tiny = pygame.font.Font(None, 14)
 
         # Game state
         self.state = "title"
@@ -132,7 +133,7 @@ class Game:
         self.selected_slot = None
         self.reveal_timer = 0
         # How long to show result before next round starts automatically
-        self.reveal_duration = FPS // 4  # shorter, snappier rounds
+        self.reveal_duration = FPS * 3 // 4
         self.message = ""
 
         # Score
@@ -156,9 +157,12 @@ class Game:
         self.difficulties = ["EASY", "MEDIUM", "HARD"]
         self.difficulty_index = 0  # 0: easy, 1: medium, 2: hard
 
-        # Input edge tracking for difficulty changes
+        # Input edge tracking
         self.prev_up = False
         self.prev_down = False
+        self.prev_left = False
+        self.prev_right = False
+        self.prev_a = False
 
         # Apply initial difficulty settings
         self._apply_difficulty()
@@ -291,11 +295,14 @@ class Game:
             return
 
         if self.state == "choose":
-            if inputs["p1"]["left"]:
+            left_pressed = inputs["p1"]["left"]
+            right_pressed = inputs["p1"]["right"]
+            a_pressed = inputs["p1"]["a"]
+            if left_pressed and not self.prev_left:
                 self.highlight_slot = max(0, self.highlight_slot - 1)
-            if inputs["p1"]["right"]:
+            if right_pressed and not self.prev_right:
                 self.highlight_slot = min(2, self.highlight_slot + 1)
-            if inputs["p1"]["a"]:
+            if a_pressed and not self.prev_a:
                 self.selected_slot = self.highlight_slot
                 self.state = "reveal"
                 self.reveal_timer = 0
@@ -304,6 +311,9 @@ class Game:
                     self.score += 1
                 else:
                     self.message = "No treat there!"
+            self.prev_left = left_pressed
+            self.prev_right = right_pressed
+            self.prev_a = a_pressed
             return
 
         if self.state == "reveal":
@@ -332,14 +342,14 @@ class Game:
             self.screen.blit(t4, t4.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 34)))
 
             # Difficulty list on title screen, under the instructions.
-            diff_label = self.font_small.render("Difficulty (W/S):", True, WHITE)
+            diff_label = self.font_tiny.render("Difficulty (W/S):", True, GREY)
             self.screen.blit(
                 diff_label,
                 diff_label.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 64)),
             )
             for i, name in enumerate(self.difficulties):
                 color = WHITE if i == self.difficulty_index else GREY
-                text = self.font_small.render(name, True, color)
+                text = self.font_tiny.render(name, True, color)
                 self.screen.blit(
                     text,
                     text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 64 + (i + 1) * 20)),
@@ -383,8 +393,7 @@ class Game:
         # Selector
         if self.state == "choose":
             sx, sy = self.slot_positions[self.highlight_slot]
-            pulse = 2 + int((math.sin(self.frame * 0.15) + 1) * 1.5)
-            rect = pygame.Rect(sx, sy + self.cup_image.get_height() + 4, self.cup_image.get_width(), pulse)
+            rect = pygame.Rect(sx, sy - 6, self.cup_image.get_width(), 2)
             pygame.draw.rect(self.screen, WHITE, rect)
 
         # Result text
