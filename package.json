@@ -1,0 +1,21 @@
+{
+    "name": "where-is-my-treat",
+    "private": true,
+    "version": "1.0.0",
+    "description": "find the treat!",
+    "type": "module",
+    "scripts": {
+        "dev": "concurrently \"vite --port 5173 --strictPort\" \"rcade dev http://localhost:5173\"",
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "@rcade/vite-plugins": "0.1.0",
+        "concurrently": "^9.0.0",
+        "rcade": "^0.0.42",
+        "vite": "^7.2.4"
+    },
+    "dependencies": {
+        "@rcade/plugin-input-classic": "^0.2.1",
+        "pyodide": "^0.27.0"
+    }
+}
