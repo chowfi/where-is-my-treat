@@ -4,6 +4,20 @@ import { PLAYER_1, PLAYER_2, SYSTEM } from "@rcade/plugin-input-classic";
 import gameCode from "./game.py?raw";
 import wheels from "virtual:pyodide-wheels";
 
+import dogUrl from "./assets/dog.png";
+import dogTailLeftUrl from "./assets/dog_tail_left.png";
+import dogTailRightUrl from "./assets/dog_tail_right.png";
+import cupUrl from "./assets/cup.png";
+import bagelUrl from "./assets/bagel.png";
+
+globalThis.assets = {
+    dog: dogUrl,
+    dogTailLeft: dogTailLeftUrl,
+    dogTailRight: dogTailRightUrl,
+    cup: cupUrl,
+    bagel: bagelUrl,
+};
+
 async function main() {
     const pyodide = await loadPyodide({
         indexURL: "/assets",
