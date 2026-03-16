@@ -406,39 +406,41 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+
+            keys = pygame.key.get_pressed()
+            kb = {
+                "p1": {
+                    "up": keys[pygame.K_UP] or keys[pygame.K_w],
+                    "down": keys[pygame.K_DOWN] or keys[pygame.K_s],
+                    "left": keys[pygame.K_LEFT] or keys[pygame.K_a],
+                    "right": keys[pygame.K_RIGHT] or keys[pygame.K_d],
+                    "a": keys[pygame.K_f],
+                    "b": keys[pygame.K_x],
+                },
+                "p2": {
+                    "up": False, "down": False, "left": False,
+                    "right": False, "a": False, "b": False,
+                },
+                "system": {
+                    "start_1p": keys[pygame.K_SPACE] or keys[pygame.K_RETURN],
+                    "start_2p": False,
+                },
+            }
+
             if self.using_arcade_inputs:
                 raw = _get_input()
-                inputs = raw.to_py()
-            else:
-                keys = pygame.key.get_pressed()
+                arc = raw.to_py()
                 inputs = {
-                    "p1": {
-                        "up": keys[pygame.K_UP] or keys[pygame.K_w],
-                        "down": keys[pygame.K_DOWN] or keys[pygame.K_s],
-                        "left": keys[pygame.K_LEFT],
-                        "right": keys[pygame.K_RIGHT],
-                        "a": keys[pygame.K_z],
-                        "b": keys[pygame.K_x],
-                    },
-                    "p2": {
-                        "up": False, "down": False, "left": False,
-                        "right": False, "a": False, "b": False,
-                    },
-                    "system": {
-                        "start_1p": keys[pygame.K_SPACE] or keys[pygame.K_RETURN],
-                        "start_2p": False,
-                    },
+                    "p1": {k: arc["p1"][k] or kb["p1"][k] for k in kb["p1"]},
+                    "p2": arc["p2"],
+                    "system": {k: arc["system"][k] or kb["system"][k] for k in kb["system"]},
                 }
+            else:
+                inputs = kb
 
             self.update(inputs)
             self.draw(inputs)
             loop_count += 1
-            if loop_count <= 3 or (loop_count % 120 == 0 and loop_count <= 600):
-                p1 = inputs["p1"]
-                sys_in = inputs["system"]
-                print(f"[py] frame {loop_count}, state={self.state}, "
-                      f"a={p1['a']}, start={sys_in['start_1p']}, "
-                      f"left={p1['left']}, right={p1['right']}", flush=True)
             self.clock.tick(FPS)
             await asyncio.sleep(0)
 
