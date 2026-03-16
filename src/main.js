@@ -11,15 +11,20 @@ import cupUrl from "./assets/cup.png";
 import bagelUrl from "./assets/bagel.png";
 
 async function loadAssetToFS(pyodide, url, fsPath) {
+    console.log(`[game] fetching asset: ${url} -> ${fsPath}`);
     const response = await fetch(url);
+    if (!response.ok) throw new Error(`Failed to fetch ${url}: ${response.status}`);
     const buffer = await response.arrayBuffer();
     pyodide.FS.writeFile(fsPath, new Uint8Array(buffer));
+    console.log(`[game] wrote ${buffer.byteLength} bytes to ${fsPath}`);
 }
 
 async function main() {
+    console.log("[game] starting main...");
     const pyodide = await loadPyodide({
         indexURL: "/assets",
     });
+    console.log("[game] pyodide loaded");
 
     // Set up SDL2 canvas for pygame rendering
     const canvas = document.getElementById("canvas");
@@ -33,6 +38,7 @@ async function main() {
     for (const wheel of wheels) {
         await micropip.install(`/assets/${wheel}`);
     }
+    console.log("[game] wheels installed");
 
     // Pre-load image assets into Pyodide's virtual filesystem
     pyodide.FS.mkdir("/game_assets");
@@ -43,6 +49,7 @@ async function main() {
         loadAssetToFS(pyodide, cupUrl, "/game_assets/cup.png"),
         loadAssetToFS(pyodide, bagelUrl, "/game_assets/bagel.png"),
     ]);
+    console.log("[game] all assets loaded to virtual FS");
 
     // Create input bridge - called from Python
     const getInput = () => ({
@@ -69,9 +76,10 @@ async function main() {
     });
 
     pyodide.globals.set("_get_input", getInput);
+    console.log("[game] running python game code...");
 
     // Run the game
     await pyodide.runPythonAsync(gameCode);
 }
 
-main();
+main().catch((err) => console.error("[game] FATAL:", err));
