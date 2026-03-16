@@ -446,4 +446,7 @@ async def main():
     await game.run()
 
 
-asyncio.run(main())
+try:
+    asyncio.ensure_future(main())
+except RuntimeError:
+    asyncio.run(main())
