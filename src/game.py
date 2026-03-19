@@ -42,7 +42,7 @@ DIFFICULTY_SETTINGS = {
     #               speed_mult  swaps
     "EASY":        (1.0,         2),
     "MEDIUM":      (0.7,         4),
-    "HARD":        (0.5,         6),
+    "HARD":        (0.2,         8),
 }
 DIFFICULTY_NAMES = list(DIFFICULTY_SETTINGS.keys())
 
@@ -94,6 +94,7 @@ class Game:
         self.dog_frames = [
             _load_and_scale(f"{asset_dir}/dog.png", width=144),
             _load_and_scale(f"{asset_dir}/dog_tail_left.png", width=144),
+            _load_and_scale(f"{asset_dir}/dog.png", width=144),
             _load_and_scale(f"{asset_dir}/dog_tail_right.png", width=144),
         ]
         self.cup_image = _load_and_scale(f"{asset_dir}/cup.png", height=72)
